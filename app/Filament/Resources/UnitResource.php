@@ -25,7 +25,8 @@ class UnitResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name'),
+                Forms\Components\TextInput::make('name')
+                                          ->required(),
             ]);
     }
 
