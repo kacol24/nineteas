@@ -31,9 +31,14 @@ class Ingredient extends Model
         return $this->belongsTo(Unit::class);
     }
 
+    public function recipes()
+    {
+        return $this->belongsToMany(Recipe::class);
+    }
+
     public function getPricePerUnitAttribute()
     {
-        return $this->price_per_pack / $this->unit_per_pack;
+        return ceil($this->price_per_pack / $this->unit_per_pack);
     }
 
     public function getFormattedPricePerUnitAttribute()
@@ -63,11 +68,11 @@ class Ingredient extends Model
 
     public function getStockUnitsWithUnitAttribute()
     {
-        return $this->stock_units . ' ' . $this->unit->name;
+        return $this->stock_units.' '.$this->unit->name;
     }
 
     public function getTotalUnitsWithUnitAttribute()
     {
-        return $this->total_units . ' ' . $this->unit->name;
+        return $this->total_units.' '.$this->unit->name;
     }
 }

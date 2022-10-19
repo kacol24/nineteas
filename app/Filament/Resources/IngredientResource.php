@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\IngredientResource\Pages;
 use App\Filament\Resources\IngredientResource\RelationManagers;
 use App\Models\Ingredient;
+use App\Models\Unit;
 use Doctrine\Inflector\Rules\Portuguese\Rules;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class IngredientResource extends Resource
 {
     protected static ?string $navigationGroup = 'Master Product';
+
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $model = Ingredient::class;
 
@@ -55,7 +58,8 @@ class IngredientResource extends Resource
                                          if ($get('unit_per_pack') == 0) {
                                              return $set('price_per_unit', 0);
                                          }
-                                         $set('price_per_unit', $state / $get('unit_per_pack'));
+                                         $pricePerUnit = $state / $get('unit_per_pack');
+                                         $set('price_per_unit', ceil($pricePerUnit));
                                      }),
                             TextInput::make('unit_per_pack')
                                      ->reactive()
@@ -67,13 +71,13 @@ class IngredientResource extends Resource
                                          if ($state == 0) {
                                              return $set('price_per_unit', 0);
                                          }
-
-                                         $set('price_per_unit', $get('price_per_pack') / $state);
+                                         $pricePerUnit = $get('price_per_pack') / $state;
+                                         $set('price_per_unit', ceil($pricePerUnit));
                                      })
                                      ->numeric()
                                      ->required(),
                             Forms\Components\Select::make('unit_id')
-                                                   ->relationship('unit', 'name')
+                                                   ->options(Unit::query()->pluck('name', 'id'))
                                                    ->searchable()
                                                    ->required(),
                             TextInput::make('price_per_unit')
@@ -87,6 +91,7 @@ class IngredientResource extends Resource
                             TextInput::make('stock_packs')
                                      ->numeric()
                                      ->reactive()
+                                     ->default(0)
                                      ->afterStateUpdated(function (
                                          $state,
                                          callable $get,
@@ -99,6 +104,7 @@ class IngredientResource extends Resource
                                          $set('valuation', $valuation);
                                      }),
                             TextInput::make('stock_units')
+                                     ->default(0)
                                      ->numeric()
                                      ->reactive()
                                      ->afterStateUpdated(function ($state, callable $set, callable $get) {
