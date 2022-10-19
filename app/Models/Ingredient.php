@@ -16,10 +16,14 @@ class Ingredient extends Model
         'notes',
         'price_per_pack',
         'unit_per_pack',
+        'stock_packs',
+        'stock_units',
     ];
 
     protected $appends = [
         'price_per_unit',
+        'total_units',
+        'valuation',
     ];
 
     public function unit()
@@ -40,5 +44,30 @@ class Ingredient extends Model
     public function getFormattedUnitPerPackAttribute()
     {
         return $this->unit_per_pack.' '.$this->unit->name;
+    }
+
+    public function getTotalUnitsAttribute()
+    {
+        return ($this->stock_packs * $this->unit_per_pack) + $this->stock_units;
+    }
+
+    public function getValuationAttribute()
+    {
+        return $this->total_units * $this->price_per_unit;
+    }
+
+    public function getFormattedValuationAttribute()
+    {
+        return number_format($this->valuation, 0, ',', '.');
+    }
+
+    public function getStockUnitsWithUnitAttribute()
+    {
+        return $this->stock_units . ' ' . $this->unit->name;
+    }
+
+    public function getTotalUnitsWithUnitAttribute()
+    {
+        return $this->total_units . ' ' . $this->unit->name;
     }
 }

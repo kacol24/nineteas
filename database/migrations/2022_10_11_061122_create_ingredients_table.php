@@ -23,7 +23,8 @@ return new class extends Migration{
             $table->unsignedBigInteger('price_per_pack')->default(0);
             $table->unsignedBigInteger('unit_per_pack')->default(0);
 
-            $table->decimal('stock', 16, 2)->default(0);
+            $table->bigInteger('stock_packs')->default(0);
+            $table->bigInteger('stock_units')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

@@ -7,6 +7,8 @@ use App\Filament\Resources\IngredientResource\RelationManagers;
 use App\Models\Ingredient;
 use Doctrine\Inflector\Rules\Portuguese\Rules;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -26,27 +28,102 @@ class IngredientResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                                          ->required(),
+                TextInput::make('name')
+                         ->required(),
                 Forms\Components\RichEditor::make('notes')
                                            ->columnSpan(3),
-                Forms\Components\TextInput::make('price_per_pack')
-                                          ->prefix('Rp')
-                                          ->numeric()
-                                          ->required()
-                                          ->mask(function (Forms\Components\TextInput\Mask $mask) {
-                                              return $mask->numeric()
-                                                          ->decimalPlaces(0)
-                                                          ->decimalSeparator(',')
-                                                          ->thousandsSeparator('.');
-                                          }),
-                Forms\Components\TextInput::make('unit_per_pack')
-                                          ->numeric()
-                                          ->required(),
-                Forms\Components\Select::make('unit_id')
-                                       ->relationship('unit', 'name')
-                                       ->searchable()
-                                       ->required(),
+                Fieldset::make('Cost')
+                        ->schema([
+                            TextInput::make('price_per_pack')
+                                     ->reactive()
+                                     ->prefix('Rp')
+                                     ->numeric()
+                                     ->required()
+                                     ->mask(function (
+                                         Forms\Components\TextInput\Mask $mask
+                                     ) {
+                                         return $mask->numeric()
+                                                     ->decimalPlaces(0)
+                                                     ->decimalSeparator(',')
+                                                     ->thousandsSeparator('.');
+                                     })
+                                     ->afterStateUpdated(function (
+                                         $state,
+                                         callable $set,
+                                         callable $get
+                                     ) {
+                                         if ($get('unit_per_pack') == 0) {
+                                             return $set('price_per_unit', 0);
+                                         }
+                                         $set('price_per_unit', $state / $get('unit_per_pack'));
+                                     }),
+                            TextInput::make('unit_per_pack')
+                                     ->reactive()
+                                     ->afterStateUpdated(function (
+                                         $state,
+                                         callable $set,
+                                         callable $get
+                                     ) {
+                                         if ($state == 0) {
+                                             return $set('price_per_unit', 0);
+                                         }
+
+                                         $set('price_per_unit', $get('price_per_pack') / $state);
+                                     })
+                                     ->numeric()
+                                     ->required(),
+                            Forms\Components\Select::make('unit_id')
+                                                   ->relationship('unit', 'name')
+                                                   ->searchable()
+                                                   ->required(),
+                            TextInput::make('price_per_unit')
+                                     ->disabled(),
+                        ])->columns(3),
+                Fieldset::make('Inventory')
+                        ->disabled(function ($state) {
+                            return is_null($state['price_per_pack']) || is_null($state['unit_per_pack']);
+                        })
+                        ->schema([
+                            TextInput::make('stock_packs')
+                                     ->numeric()
+                                     ->reactive()
+                                     ->afterStateUpdated(function (
+                                         $state,
+                                         callable $get,
+                                         callable $set
+                                     ) {
+                                         $stockPacks = $state ?? 0;
+                                         $totalUnits = ($stockPacks * $get('unit_per_pack')) + ($get('stock_units') ?? 0);
+                                         $set('total_units', $totalUnits);
+                                         $valuation = number_format($totalUnits * $get('price_per_unit'), 0, ',', '.');
+                                         $set('valuation', $valuation);
+                                     }),
+                            TextInput::make('stock_units')
+                                     ->numeric()
+                                     ->reactive()
+                                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                         $stockPacks = $get('stock_packs') ?? 0;
+                                         $totalUnits = ($stockPacks * $get('unit_per_pack')) + ($state ?? 0);
+                                         $set('total_units', $totalUnits);
+                                         $valuation = number_format($totalUnits * $get('price_per_unit'), 0, ',', '.');
+                                         $set('valuation', $valuation);
+                                     }),
+                            TextInput::make('total_units')
+                                     ->numeric()
+                                     ->disabled(),
+                            TextInput::make('valuation')
+                                     ->numeric()
+                                     ->disabled()
+                                     ->prefix('Rp')
+                                     ->mask(function (
+                                         Forms\Components\TextInput\Mask $mask
+                                     ) {
+                                         return $mask->numeric()
+                                                     ->decimalPlaces(0)
+                                                     ->decimalSeparator(',')
+                                                     ->thousandsSeparator('.');
+                                     }),
+                        ])->columns(2),
             ])
             ->columns(3);
     }
@@ -68,6 +145,12 @@ class IngredientResource extends Resource
                                          ->label('Nett Per Pack'),
                 Tables\Columns\TextColumn::make('formatted_price_per_unit')
                                          ->label('Price Per Unit')
+                                         ->prefix('Rp'),
+                Tables\Columns\TextColumn::make('stock_packs'),
+                Tables\Columns\TextColumn::make('stock_units_with_unit'),
+                Tables\Columns\TextColumn::make('total_units_with_unit'),
+                Tables\Columns\TextColumn::make('formatted_valuation')
+                                         ->sortable()
                                          ->prefix('Rp'),
             ])
             ->filters([
