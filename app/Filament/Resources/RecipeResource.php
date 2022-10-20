@@ -147,6 +147,10 @@ class RecipeResource extends Resource
                     Tables\Columns\TextColumn::make('name')
                                              ->sortable()
                                              ->searchable(),
+                    Tables\Columns\TextColumn::make('category.name')
+                                             ->label('Category')
+                                             ->sortable()
+                                             ->searchable(),
                     Tables\Columns\TextColumn::make('ingredients_count')
                                              ->counts('ingredients')
                                              ->suffix(' ingredients'),
