@@ -18,6 +18,7 @@ class Ingredient extends Model
         'unit_per_pack',
         'stock_packs',
         'stock_units',
+        'ingredient_category_id',
     ];
 
     protected $appends = [
@@ -34,6 +35,11 @@ class Ingredient extends Model
     public function recipes()
     {
         return $this->belongsToMany(Recipe::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(IngredientCategory::class, 'ingredient_category_id');
     }
 
     public function getPricePerUnitAttribute()

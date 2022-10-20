@@ -13,6 +13,10 @@ class ListIngredients extends ListRecords
     protected function getActions(): array
     {
         return [
+            Actions\Action::make('manage_categories')
+                          ->label('Manage Categories')
+                          ->color('secondary')
+                          ->url(route('filament.resources.ingredient-categories.index')),
             Actions\CreateAction::make(),
         ];
     }

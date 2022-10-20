@@ -10,12 +10,20 @@ class Recipe extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'recipe_category_id',
+    ];
 
     protected $appends = [
         'cogs',
         'formatted_cogs',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(RecipeCategory::class, 'recipe_category_id');
+    }
 
     public function ingredients()
     {

@@ -6,6 +6,7 @@ use App\Filament\Resources\RecipeResource\Pages;
 use App\Filament\Resources\RecipeResource\RelationManagers;
 use App\Models\Ingredient;
 use App\Models\Recipe;
+use App\Models\RecipeCategory;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -13,6 +14,8 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Stack;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -32,8 +35,12 @@ class RecipeResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                                           ->required(),
+                Select::make('recipe_category_id')
+                      ->label('Category')
+                      ->options(RecipeCategory::query()->pluck('name', 'id'))
+                      ->searchable(),
                 Forms\Components\TextInput::make('formatted_cogs')
-                                          ->label('COGS')
+                                          ->label('Total COGS')
                                           ->prefix('Rp')
                                           ->disabled(),
                 Repeater::make('ingredients')
@@ -51,7 +58,7 @@ class RecipeResource extends Resource
                             $unitPerRecipe = $state['unit_per_recipe'];
                             $formattedCogs = $state['formatted_cogs'];
 
-                            if ($unitPerRecipe) {
+                            if ($formattedCogs) {
                                 $titleTemplate = '{ingredient_name} ({unit_per_recipe} {unit}): Rp{formatted_cogs}';
 
                                 return str_replace(
@@ -94,7 +101,7 @@ class RecipeResource extends Resource
                                   })
                                   ->searchable(),
                             Forms\Components\TextInput::make('unit_per_recipe')
-                                                      ->default(0)
+                                                      ->default(1)
                                                       ->required()
                                                       ->suffix(function (callable $get) {
                                                           $ingredientId = $get('ingredient_id');
@@ -136,17 +143,22 @@ class RecipeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                                         ->sortable()
-                                         ->searchable(),
-                Tables\Columns\TextColumn::make('ingredients_count')
-                                         ->counts('ingredients'),
-                Tables\Columns\TextColumn::make('cogs')
-                                         ->label('COGS')
-                                         ->formatStateUsing(function ($state) {
-                                             return number_format($state, 0, ',', '.');
-                                         })
-                                         ->prefix('Rp'),
+                Tables\Columns\Layout\Split::make([
+                    Tables\Columns\TextColumn::make('name')
+                                             ->sortable()
+                                             ->searchable(),
+                    Tables\Columns\TextColumn::make('ingredients_count')
+                                             ->counts('ingredients')
+                                             ->suffix(' ingredients'),
+                    Tables\Columns\TextColumn::make('cogs')
+                                             ->label('COGS')
+                                             ->formatStateUsing(function ($state) {
+                                                 return number_format($state, 0, ',', '.');
+                                             })
+                                             ->prefix('Rp'),
+                ]),
+                Tables\Columns\Layout\View::make('recipes.table.collapsible-row-content')
+                                          ->collapsible(),
             ])
             ->filters([
                 //

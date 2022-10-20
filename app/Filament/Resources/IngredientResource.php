@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\IngredientResource\Pages;
 use App\Filament\Resources\IngredientResource\RelationManagers;
 use App\Models\Ingredient;
+use App\Models\IngredientCategory;
 use App\Models\Unit;
 use Doctrine\Inflector\Rules\Portuguese\Rules;
 use Filament\Forms;
@@ -33,6 +34,10 @@ class IngredientResource extends Resource
             ->schema([
                 TextInput::make('name')
                          ->required(),
+                Forms\Components\Select::make('ingredient_category_id')
+                                       ->label('Category')
+                                       ->options(IngredientCategory::query()->pluck('name', 'id'))
+                                       ->searchable(),
                 Forms\Components\RichEditor::make('notes')
                                            ->columnSpan(3),
                 Fieldset::make('Cost')
@@ -77,9 +82,19 @@ class IngredientResource extends Resource
                                      ->numeric()
                                      ->required(),
                             Forms\Components\Select::make('unit_id')
+                                                   ->label('Unit')
                                                    ->options(Unit::query()->pluck('name', 'id'))
                                                    ->searchable()
-                                                   ->required(),
+                                                   ->required()
+                                                   ->createOptionForm([
+                                                       Forms\Components\TextInput::make('name')
+                                                                                 ->required(),
+                                                   ])
+                                                   ->createOptionUsing(function ($data) {
+                                                       $unit = Unit::create(['name' => $data['name']]);
+
+                                                       return $unit->id;
+                                                   }),
                             TextInput::make('price_per_unit')
                                      ->disabled(),
                         ])->columns(3),
@@ -141,26 +156,40 @@ class IngredientResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                                          ->searchable()
                                          ->sortable(),
+                Tables\Columns\TextColumn::make('category.name')
+                                         ->label('Category')
+                                         ->sortable()
+                                         ->searchable(),
                 Tables\Columns\TextColumn::make('price_per_pack')
+                                         ->label('Price Per Pack')
                                          ->prefix('Rp')
                                          ->formatStateUsing(function (string $state) {
                                              return number_format($state, 0, ',', '.');
                                          })
                                          ->sortable(),
                 Tables\Columns\TextColumn::make('formatted_unit_per_pack')
-                                         ->label('Nett Per Pack'),
+                                         ->label('Unit Per Pack')
+                                         ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('formatted_price_per_unit')
                                          ->label('Price Per Unit')
-                                         ->prefix('Rp'),
+                                         ->prefix('Rp')
+                                         ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('stock_packs'),
-                Tables\Columns\TextColumn::make('stock_units_with_unit'),
-                Tables\Columns\TextColumn::make('total_units_with_unit'),
+                Tables\Columns\TextColumn::make('stock_units_with_unit')
+                                         ->label('Stock Units'),
+                Tables\Columns\TextColumn::make('total_units_with_unit')
+                                         ->toggleable(isToggledHiddenByDefault: true)
+                                         ->label('Total Stock Units'),
                 Tables\Columns\TextColumn::make('formatted_valuation')
                                          ->sortable()
+                                         ->label('Valuation')
                                          ->prefix('Rp'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('ingredient_category_id')
+                                           ->options(IngredientCategory::query()->pluck('name', 'id'))
+                                           ->multiple()
+                                           ->label('Category'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
