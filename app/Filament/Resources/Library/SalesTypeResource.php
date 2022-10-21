@@ -28,6 +28,8 @@ class SalesTypeResource extends Resource
                                           ->required()
                                           ->unique(ignoreRecord: true),
                 Forms\Components\Toggle::make('is_active')
+                                       ->label('Active')
+                                       ->inline(false)
                                        ->hiddenOn('create'),
             ]);
     }

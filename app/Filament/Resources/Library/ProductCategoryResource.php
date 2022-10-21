@@ -33,7 +33,8 @@ class ProductCategoryResource extends Resource
                          ->unique(ignoreRecord: true),
                 Toggle::make('is_shown')
                       ->label('Shown')
-                      ->hiddenOn('create'),
+                      ->hiddenOn('create')
+                      ->inline(false),
             ]);
     }
 
@@ -44,7 +45,7 @@ class ProductCategoryResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                                          ->searchable(),
                 Tables\Columns\ToggleColumn::make('is_shown')
-                                           ->label('Active'),
+                                           ->label('Shown'),
             ])
             ->filters([
                 //
