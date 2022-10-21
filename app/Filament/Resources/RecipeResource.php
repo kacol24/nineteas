@@ -10,6 +10,7 @@ use App\Models\RecipeCategory;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -21,13 +22,29 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RecipeResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Master Product';
+    protected static ?string $navigationGroup = 'Master Inventory';
 
     protected static ?int $navigationSort = 5;
 
     protected static ?string $model = Recipe::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+
+    public static function getNavigationItems(): array
+    {
+        $routeBaseName = static::getRouteBaseName();
+        $subBaseName = RecipeCategoryResource::getRouteBaseName();
+
+        return [
+            NavigationItem::make(static::getNavigationLabel())
+                          ->group(static::getNavigationGroup())
+                          ->icon(static::getNavigationIcon())
+                          ->isActiveWhen(fn() => request()->routeIs("{$routeBaseName}.*", "{$subBaseName}.*"))
+                          ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                          ->sort(static::getNavigationSort())
+                          ->url(static::getNavigationUrl()),
+        ];
+    }
 
     public static function form(Form $form): Form
     {

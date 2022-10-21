@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UnitResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Master Product';
+    protected static ?string $navigationGroup = 'Master Inventory';
 
     protected static ?int $navigationSort = 15;
 

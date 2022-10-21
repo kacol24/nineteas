@@ -11,6 +11,7 @@ use Doctrine\Inflector\Rules\Portuguese\Rules;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -20,13 +21,29 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class IngredientResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Master Product';
+    protected static ?string $navigationGroup = 'Master Inventory';
 
     protected static ?int $navigationSort = 10;
 
     protected static ?string $model = Ingredient::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+
+    public static function getNavigationItems(): array
+    {
+        $routeBaseName = static::getRouteBaseName();
+        $subBaseName = IngredientCategoryResource::getRouteBaseName();
+
+        return [
+            NavigationItem::make(static::getNavigationLabel())
+                          ->group(static::getNavigationGroup())
+                          ->icon(static::getNavigationIcon())
+                          ->isActiveWhen(fn() => request()->routeIs("{$routeBaseName}.*", "{$subBaseName}.*"))
+                          ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                          ->sort(static::getNavigationSort())
+                          ->url(static::getNavigationUrl()),
+        ];
+    }
 
     public static function form(Form $form): Form
     {

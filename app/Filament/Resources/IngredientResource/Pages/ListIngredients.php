@@ -16,7 +16,7 @@ class ListIngredients extends ListRecords
             Actions\Action::make('manage_categories')
                           ->label('Manage Categories')
                           ->color('secondary')
-                          ->url(route('filament.resources.ingredient-categories.index')),
+                          ->url(route('filament.resources.ingredients.categories.index')),
             Actions\CreateAction::make(),
         ];
     }
