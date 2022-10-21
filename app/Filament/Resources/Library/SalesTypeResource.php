@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Library;
 
+use App\Filament\Resources\Library;
 use App\Filament\Resources\SalesTypeResource\Pages;
 use App\Filament\Resources\SalesTypeResource\RelationManagers;
 use App\Models\SalesType;
@@ -10,11 +11,11 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SalesTypeResource extends Resource
 {
+    protected static ?string $navigationGroup = 'Library';
+
     protected static ?string $model = SalesType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
@@ -56,7 +57,7 @@ class SalesTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageSalesTypes::route('/'),
+            'index' => Library\SalesTypeResource\Pages\ManageSalesTypes::route('/'),
         ];
     }
 }

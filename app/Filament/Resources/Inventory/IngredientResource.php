@@ -19,7 +19,7 @@ use Filament\Tables;
 
 class IngredientResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Master Inventory';
+    protected static ?string $navigationGroup = 'Inventory';
 
     protected static ?int $navigationSort = 10;
 
