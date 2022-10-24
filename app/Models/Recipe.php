@@ -13,6 +13,7 @@ class Recipe extends Model
     protected $fillable = [
         'name',
         'recipe_category_id',
+        'target_price',
     ];
 
     protected $appends = [
@@ -43,5 +44,24 @@ class Recipe extends Model
     public function getFormattedCogsAttribute()
     {
         return number_format($this->cogs, 0, ',', '.');
+    }
+
+    public function getMarginAttribute()
+    {
+        return $this->target_price - $this->cogs;
+    }
+
+    public function getFormattedMarginAttribute()
+    {
+        return number_format($this->margin, 0, ',', '.');
+    }
+
+    public function getMarginPercentAttribute()
+    {
+        if (!$this->target_price) {
+            return 0;
+        }
+
+        return $this->margin / $this->target_price * 100;
     }
 }

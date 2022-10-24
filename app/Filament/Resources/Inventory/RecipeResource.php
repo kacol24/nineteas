@@ -53,6 +53,18 @@ class RecipeResource extends Resource
                       ->label('Category')
                       ->options(RecipeCategory::query()->pluck('name', 'id'))
                       ->searchable(),
+                Forms\Components\TextInput::make('target_price')
+                                          ->prefix('Rp')
+                                          ->lazy()
+                                          ->mask(function (
+                                              Forms\Components\TextInput\Mask $mask
+                                          ) {
+                                              return $mask->numeric()
+                                                          ->decimalPlaces(0)
+                                                          ->decimalSeparator(',')
+                                                          ->thousandsSeparator('.');
+                                          })
+                                          ->numeric(),
                 Forms\Components\TextInput::make('formatted_cogs')
                                           ->label('Total COGS')
                                           ->prefix('Rp')
@@ -174,6 +186,21 @@ class RecipeResource extends Resource
                                                  return number_format($state, 0, ',', '.');
                                              })
                                              ->prefix('Rp'),
+                    Tables\Columns\TextColumn::make('target_price')
+                                             ->formatStateUsing(function ($state) {
+                                                 return number_format($state, 0, ',', '.');
+                                             })
+                                             ->prefix('Rp'),
+                    Tables\Columns\TextColumn::make('margin')
+                                             ->formatStateUsing(function ($state) {
+                                                 return number_format($state, 0, ',', '.');
+                                             })
+                                             ->prefix('Rp'),
+                    Tables\Columns\TextColumn::make('margin_percent')
+                                             ->formatStateUsing(function ($state) {
+                                                 return number_format($state, 1, ',', '.');
+                                             })
+                                             ->suffix('%'),
                 ]),
                 Tables\Columns\Layout\View::make('recipes.table.collapsible-row-content')
                                           ->collapsible(),
