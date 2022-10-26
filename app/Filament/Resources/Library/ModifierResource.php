@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ModifierResource extends Resource
 {
+    protected static ?string $navigationGroup = 'Library';
+
     protected static ?string $model = Modifier::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
