@@ -84,6 +84,8 @@ class CustomerResource extends Resource
                                          ->sortable()
                                          ->toggleable()
                                          ->date('d/m/Y'),
+                Tables\Columns\TextColumn::make('balance')
+                                         ->toggleable(),
             ])
             ->filters([
                 //

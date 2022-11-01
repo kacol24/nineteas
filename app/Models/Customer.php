@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Bavix\Wallet\Interfaces\Wallet;
+use Bavix\Wallet\Traits\HasWallet;
+use Bavix\Wallet\Traits\HasWallets;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Customer extends User
+class Customer extends User implements Wallet
 {
+    use HasWallet;
+    use HasWallets;
     use SoftDeletes;
 
     /**
