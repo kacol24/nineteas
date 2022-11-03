@@ -4,6 +4,8 @@
         <tr>
             <th class="border px-3 py-1">#</th>
             <th class="border px-3 py-1">Ingredient</th>
+            <th class="border px-3 py-1">Price / Pack</th>
+            <th class="border px-3 py-1">Unit / Pack</th>
             <th class="border px-3 py-1">Unit / Recipe</th>
             <th class="border px-3 py-1">COGS (Rp)</th>
         </tr>
@@ -15,6 +17,12 @@
                 </th>
                 <th class="border px-3 py-1">
                     {{ $recipeIngredient->ingredient->name }}
+                </th>
+                <th class="border px-3 py-1">
+                    {{ $recipeIngredient->ingredient->formatted_price_per_pack }}
+                </th>
+                <th class="border px-3 py-1">
+                    {{ $recipeIngredient->ingredient->formatted_unit_per_pack }}
                 </th>
                 <td class="border px-3 py-1 font-mono">
                     <table class="w-full">

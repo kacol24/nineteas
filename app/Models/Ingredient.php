@@ -81,4 +81,9 @@ class Ingredient extends Model
     {
         return $this->total_units.' '.$this->unit->name;
     }
+
+    public function getFormattedPricePerPackAttribute()
+    {
+        return number_format($this->price_per_pack, 0, ',', '.');
+    }
 }
