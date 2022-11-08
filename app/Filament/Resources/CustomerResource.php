@@ -85,6 +85,7 @@ class CustomerResource extends Resource
                                          ->toggleable()
                                          ->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('balance')
+                                         ->label('Tea Leaves')
                                          ->formatStateUsing(function ($state) {
                                              return number_format($state, 0, ',', '.');
                                          })
