@@ -6,9 +6,11 @@ use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWallet;
 use Bavix\Wallet\Traits\HasWallets;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use QCod\Gamify\Gamify;
 
 class Customer extends User implements Wallet
 {
+    use Gamify;
     use HasWallet;
     use HasWallets;
     use SoftDeletes;
@@ -52,4 +54,20 @@ class Customer extends User implements Wallet
         'email_verified_at' => 'datetime',
         'date_of_birth'     => 'date',
     ];
+
+    /**
+     * Sync badges for qiven user
+     *
+     * @param $user
+     */
+    public function syncBadges($user = null)
+    {
+        $user = is_null($user) ? $this : $user;
+
+        $badgeIds = app('badges')->filter
+            ->qualifier($user)
+            ->map->getBadgeId();
+
+        $user->badges()->sync($badgeIds);
+    }
 }
