@@ -16,7 +16,8 @@
                     <thead>
                     <tr>
                         <th>Action</th>
-                        <th>Point</th>
+                        <th>Points</th>
+                        <th>Meta</th>
                         <th>Given At</th>
                     </tr>
                     </thead>
@@ -25,6 +26,9 @@
                         <tr>
                             <td>
                                 {{ $reputation->name }}
+                            </td>
+                            <td>{{ $reputation->point }}</td>
+                            <td>
                                 @if(json_decode($reputation->meta))
                                     <dl class="mb-0">
                                         @foreach(json_decode($reputation->meta) as $key => $value)
@@ -34,7 +38,6 @@
                                     </dl>
                                 @endif
                             </td>
-                            <td>{{ $reputation->point }}</td>
                             <td>{{ $reputation->created_at }}</td>
                         </tr>
                     @endforeach
