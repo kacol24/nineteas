@@ -63,3 +63,18 @@ Route::post('loyalty', function (Request $request) {
 
     return redirect()->route('loyalty', ['member_id' => $customer->member_id]);
 });
+
+Route::get('check-points', function () {
+    $data = [];
+
+    if (request()->has('member_id')) {
+        $memberId = request('member_id');
+        $memberId = str_replace('-', '', $memberId);
+
+        $customer = Customer::where('member_id', $memberId)->firstOrFail();
+        $data['customer'] = $customer;
+    }
+
+    return view('check_points', $data);
+})
+     ->name('check_points');
