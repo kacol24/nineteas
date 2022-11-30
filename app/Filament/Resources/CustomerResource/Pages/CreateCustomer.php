@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\CustomerResource\Pages;
 
+use App\Actions\Fortify\CreateNewUser;
 use App\Filament\Resources\CustomerResource;
-use App\Models\Customer;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateCustomer extends CreateRecord
@@ -13,26 +14,8 @@ class CreateCustomer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $sequenceGroup = '{outlet_id}{year}';
-        $sequenceGroup = str_replace(
-            [
-                '{outlet_id}',
-                '{year}',
-            ],
-            [
-                '9000',
-                date('Y'),
-            ],
-            $sequenceGroup
-        );
-        $lastSequence = Customer::where('sequence_group', $sequenceGroup)
-                                ->max('sequence');
-
-        $data['sequence_group'] = $sequenceGroup;
-        $data['sequence'] = (int) $lastSequence + 1;
-        $data['member_id'] = $data['sequence_group'].str_pad($data['sequence'], 8, 0, STR_PAD_LEFT);
-
-        $customer = parent::handleRecordCreation($data);
+        $customer = (new CreateNewUser())->create($data);
+        event(new Registered($customer));
 
         return $customer;
     }
