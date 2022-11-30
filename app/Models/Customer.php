@@ -5,10 +5,11 @@ namespace App\Models;
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWallet;
 use Bavix\Wallet\Traits\HasWallets;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use QCod\Gamify\Gamify;
 
-class Customer extends User implements Wallet
+class Customer extends User implements Wallet, MustVerifyEmail
 {
     use Gamify;
     use HasWallet;
