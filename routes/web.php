@@ -71,7 +71,10 @@ Route::get('check-points', function () {
         $memberId = request('member_id');
         $memberId = str_replace('-', '', $memberId);
 
-        $customer = Customer::where('member_id', $memberId)->firstOrFail();
+        $customer = Customer::query()
+                            ->where('member_id', $memberId)
+                            ->orWhere('phone', $memberId)
+                            ->firstOrFail();
         $data['customer'] = $customer;
     }
 

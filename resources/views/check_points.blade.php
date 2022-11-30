@@ -12,8 +12,8 @@
     @if(!isset($customer))
         <form>
             <div class="mb-3">
-                <label for="member_id" class="form-label">Customer ID</label>
-                <input type="text" class="form-control" placeholder="9000xxxxxxxxxxxx" id="member_id"
+                <label for="member_id" class="form-label">Customer ID / Phone</label>
+                <input type="text" class="form-control" placeholder="9000xxxxxxxxxxxx or 08xxxxxxxxxx" id="member_id"
                        name="member_id" autofocus>
             </div>
             <button type="submit" class="btn btn-primary">Check Points</button>
