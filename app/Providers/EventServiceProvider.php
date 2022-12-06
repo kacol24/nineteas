@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\GiveNewCustomerRegistrationReward;
+use App\Listeners\SyncBadgeOfNewUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -19,6 +20,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+            SyncBadgeOfNewUser::class,
         ],
         Verified::class   => [
             GiveNewCustomerRegistrationReward::class,
