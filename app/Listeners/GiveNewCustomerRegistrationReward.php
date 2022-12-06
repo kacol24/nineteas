@@ -27,6 +27,6 @@ class GiveNewCustomerRegistrationReward
      */
     public function handle(Verified $event)
     {
-        $event->user->givePoint(new RegistrationReward($event->user));
+        givePoint(new RegistrationReward($event->user));
     }
 }
