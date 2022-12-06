@@ -43,6 +43,7 @@ Route::get('loyalty', function () {
 
     if (request()->has('member_id')) {
         $memberId = request('member_id');
+        $memberId = str_replace('-', '', $memberId);
         $data['customer'] = Customer::where('member_id', $memberId)->firstOrFail();
     }
 
