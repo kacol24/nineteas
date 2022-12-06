@@ -17,21 +17,24 @@ class CreateNewUser implements CreatesNewUsers
      * Validate and create a newly registered user.
      *
      * @param  array  $input
+     * @param  bool  $validate
      * @return \App\Models\User
      */
-    public function create(array $input)
+    public function create(array $input, $validate = true)
     {
-        Validator::make($input, [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique(Customer::class),
-            ],
-            'password' => $this->passwordRules(),
-        ])->validate();
+        if ($validate) {
+            Validator::make($input, [
+                'name'     => ['required', 'string', 'max:255'],
+                'email'    => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    Rule::unique(Customer::class),
+                ],
+                'password' => $this->passwordRules(),
+            ])->validate();
+        }
 
         $sequenceGroup = '{outlet_id}{year}';
         $sequenceGroup = str_replace(

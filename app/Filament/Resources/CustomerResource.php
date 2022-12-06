@@ -6,8 +6,11 @@ use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers;
 use App\Models\Customer;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TextInput\Mask;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -25,37 +28,36 @@ class CustomerResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Grid::make()
-                                     ->schema([
-                                         Forms\Components\Toggle::make('is_active')
-                                                                ->label('Active')
-                                                                ->disabled()
-                                                                ->inline(false)
-                                                                ->default(true),
-                                         TextInput::make('member_id')
-                                                  ->label('Member ID')
-                                                  ->disabled()
-                                                  ->mask(function (Mask $mask) {
-                                                      return $mask->pattern('0000-0000-0000-0000');
-                                                  })
-                                                  ->hiddenOn('create'),
-                                     ]),
+                Grid::make()
+                    ->schema([
+                        Toggle::make('is_active')
+                              ->label('Active')
+                              ->disabled()
+                              ->inline(false)
+                              ->default(true),
+                        TextInput::make('member_id')
+                                 ->label('Member ID')
+                                 ->disabled()
+                                 ->mask(function (Mask $mask) {
+                                     return $mask->pattern('0000-0000-0000-0000');
+                                 })
+                                 ->hiddenOn('create'),
+                    ]),
                 TextInput::make('name')
+                         ->lazy()
                          ->required(),
                 TextInput::make('email')
-                         ->required()
-                         ->email(),
-                TextInput::make('password')
-                         ->required()
-                         ->password()
-                         ->confirmed(),
-                TextInput::make('password_confirmation')
-                         ->required()
-                         ->password(),
+                         ->email()
+                         ->hiddenOn('create'),
                 TextInput::make('phone')
+                         ->lazy()
+                         ->prefix('+62')
+                         ->required()
                          ->tel(),
-                Forms\Components\DatePicker::make('date_of_birth')
-                                           ->displayFormat('d/m/Y'),
+                DatePicker::make('date_of_birth')
+                          ->lazy()
+                          ->required()
+                          ->displayFormat('d/m/Y'),
             ]);
     }
 

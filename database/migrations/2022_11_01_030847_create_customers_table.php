@@ -23,12 +23,12 @@ return new class extends Migration{
 
             $table->string('name');
 
-            $table->string('email')->unique();
+            $table->string('email')->unique()->index()->nullable();;
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->rememberToken();
 
-            $table->string('phone')->index()->nullable();
+            $table->string('phone')->unique()->index()->nullable();
             $table->date('date_of_birth')->nullable();
 
             $table->timestamps();
