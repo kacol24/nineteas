@@ -64,7 +64,8 @@ Route::post('loyalty', function (Request $request) {
     return redirect()->route('loyalty', ['member_id' => $customer->member_id]);
 });
 
-Route::get('check-points', function () {
+Route::middleware('auth')
+    ->get('check-points', function () {
     $data = [];
 
     if (request()->has('member_id')) {
@@ -79,5 +80,4 @@ Route::get('check-points', function () {
     }
 
     return view('check_points', $data);
-})
-     ->name('check_points');
+})->name('check_points');
