@@ -32,7 +32,7 @@
                         <tbody>
                         <tr>
                             <th>Level</th>
-                            <td>{{ $customer->badges->last()->name }}</td>
+                            <td>{{ optional(optional($customer->badges)->last())->name }}</td>
                         </tr>
                         <tr>
                             <th>Points</th>
