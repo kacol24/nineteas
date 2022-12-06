@@ -47,8 +47,8 @@
                         <div class="mb-3">
                             <label for="member_id" class="form-label">Customer ID</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="9000xxxxxxxxxxxx" id="member_id"
-                                       name="member_id" value="{{ request('member_id') }}" readonly>
+                                <input type="text" class="form-control disabled" placeholder="9000xxxxxxxxxxxx" id="member_id"
+                                       name="member_id" value="{{ request('member_id') }}" readonly disabled>
                                 <a class="btn btn-outline-danger" href="/loyalty">Cancel</a>
                             </div>
                         </div>
