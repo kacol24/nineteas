@@ -62,14 +62,14 @@ class IngredientResource extends Resource
                                      ->prefix('Rp')
                                      ->numeric()
                                      ->required()
-                                     ->mask(function (
-                                         Forms\Components\TextInput\Mask $mask
-                                     ) {
-                                         return $mask->numeric()
-                                                     ->decimalPlaces(0)
-                                                     ->decimalSeparator(',')
-                                                     ->thousandsSeparator('.');
-                                     })
+                                     //->mask(function (
+                                     //    Forms\Components\TextInput\Mask $mask
+                                     //) {
+                                     //    return $mask->numeric()
+                                     //                ->decimalPlaces(0)
+                                     //                ->decimalSeparator(',')
+                                     //                ->thousandsSeparator('.');
+                                     //})
                                      ->afterStateUpdated(function (
                                          $state,
                                          callable $set,
